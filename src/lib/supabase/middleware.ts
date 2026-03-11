@@ -35,8 +35,11 @@ export async function updateSession(request: NextRequest) {
     },
   );
 
-  // Refresh session — important for Server Components
-  await supabase.auth.getUser();
+  // Validate session against Supabase Auth server
+  // CRITICAL: getUser() validates JWT server-side, getSession() only reads local cookie
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  return supabaseResponse;
+  return { response: supabaseResponse, user };
 }
