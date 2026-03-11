@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BarChart3, Link as LinkIcon, Users, FolderOpen } from 'lucide-react';
+import { BarChart3, Link as LinkIcon, Users, FolderOpen, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
@@ -10,6 +10,7 @@ const navItems = [
   { label: 'Links', href: '/links', icon: LinkIcon },
   { label: 'Conversões', href: '/conversions', icon: Users, disabled: true },
   { label: 'Projetos', href: '/projects', icon: FolderOpen },
+  { label: 'Configuracoes', href: '/settings/tracking', icon: Settings },
 ];
 
 export function AppSidebar() {
