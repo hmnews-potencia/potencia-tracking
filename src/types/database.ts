@@ -13,6 +13,9 @@ export type Json =
   | Json[];
 
 export interface Database {
+  __InternalSupabase: {
+    PostgrestVersion: '12';
+  };
   public: {
     Tables: {
       profiles: {
@@ -37,6 +40,7 @@ export interface Database {
           role?: 'admin' | 'member';
           created_at?: string;
         };
+        Relationships: [];
       };
       projects: {
         Row: {
@@ -66,6 +70,7 @@ export interface Database {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       project_pages: {
         Row: {
@@ -92,6 +97,15 @@ export interface Database {
           is_default?: boolean;
           created_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: 'project_pages_project_id_fkey';
+            columns: ['project_id'];
+            isOneToOne: false;
+            referencedRelation: 'projects';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       utm_links: {
         Row: {
@@ -142,6 +156,22 @@ export interface Database {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: 'utm_links_project_id_fkey';
+            columns: ['project_id'];
+            isOneToOne: false;
+            referencedRelation: 'projects';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'utm_links_page_id_fkey';
+            columns: ['page_id'];
+            isOneToOne: false;
+            referencedRelation: 'project_pages';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       tracking_events: {
         Row: {
@@ -204,6 +234,22 @@ export interface Database {
           is_orphan?: boolean;
           created_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: 'tracking_events_project_id_fkey';
+            columns: ['project_id'];
+            isOneToOne: false;
+            referencedRelation: 'projects';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'tracking_events_link_id_fkey';
+            columns: ['link_id'];
+            isOneToOne: false;
+            referencedRelation: 'utm_links';
+            referencedColumns: ['id'];
+          },
+        ];
       };
     };
     Views: Record<string, never>;
