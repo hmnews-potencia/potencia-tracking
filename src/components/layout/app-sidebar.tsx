@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 const navItems = [
   { label: 'Dashboard', href: '/', icon: BarChart3 },
   { label: 'Links', href: '/links', icon: LinkIcon },
-  { label: 'Conversões', href: '/conversions', icon: Users, disabled: true },
+  { label: 'Conversões', href: '/conversions', icon: Users },
   { label: 'Projetos', href: '/projects', icon: FolderOpen },
   { label: 'Configuracoes', href: '/settings/tracking', icon: Settings },
 ];
@@ -29,14 +29,12 @@ export function AppSidebar() {
             return (
               <Link
                 key={item.href}
-                href={item.disabled ? '#' : item.href}
-                aria-disabled={item.disabled}
+                href={item.href}
                 className={cn(
                   'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors',
                   isActive
                     ? 'bg-zinc-800 text-foreground'
                     : 'text-muted-foreground hover:bg-zinc-900 hover:text-foreground',
-                  item.disabled && 'pointer-events-none opacity-50',
                 )}
               >
                 <item.icon className="h-4 w-4" />
@@ -57,14 +55,12 @@ export function AppSidebar() {
           return (
             <Link
               key={item.href}
-              href={item.disabled ? '#' : item.href}
-              aria-disabled={item.disabled}
+              href={item.href}
               className={cn(
                 'flex flex-1 flex-col items-center gap-1 py-2 text-xs transition-colors',
                 isActive
                   ? 'text-primary'
                   : 'text-muted-foreground',
-                item.disabled && 'pointer-events-none opacity-50',
               )}
             >
               <item.icon className="h-5 w-5" />

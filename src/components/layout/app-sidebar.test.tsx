@@ -14,14 +14,15 @@ describe('AppSidebar', () => {
     expect(screen.getAllByText('Links')).toHaveLength(2);
     expect(screen.getAllByText('Conversões')).toHaveLength(2);
     expect(screen.getAllByText('Projetos')).toHaveLength(2);
+    expect(screen.getAllByText('Configuracoes')).toHaveLength(2);
   });
 
-  it('should disable Conversões nav item', () => {
+  it('should link Conversões to /conversions', () => {
     render(<AppSidebar />);
 
     const conversionsLinks = screen.getAllByText('Conversões');
     conversionsLinks.forEach((link) => {
-      expect(link.closest('a')).toHaveAttribute('aria-disabled', 'true');
+      expect(link.closest('a')).toHaveAttribute('href', '/conversions');
     });
   });
 

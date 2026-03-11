@@ -1,21 +1,22 @@
-import { Activity } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
+'use client';
+
+import { FilterBar } from '@/components/dashboard/filter-bar';
+import { KpiCards } from '@/components/dashboard/kpi-cards';
+import { AnalyticsCharts } from '@/components/dashboard/analytics-charts';
 
 export default function DashboardPage() {
   return (
-    <div className="flex flex-1 items-center justify-center">
-      <Card className="w-full max-w-md">
-        <CardContent className="flex flex-col items-center gap-4 pt-8 pb-8">
-          <Activity className="h-16 w-16 text-muted-foreground" />
-          <h1 className="text-2xl font-semibold text-foreground">
-            Nenhum dado ainda
-          </h1>
-          <p className="text-center text-sm text-muted-foreground">
-            Crie links UTM e integre o script de tracking para começar a
-            visualizar os dados do seu projeto.
-          </p>
-        </CardContent>
-      </Card>
+    <div className="flex flex-col gap-6">
+      <div>
+        <h1 className="text-2xl font-bold">Dashboard</h1>
+        <p className="text-muted-foreground">
+          Visao geral do tracking do projeto ativo.
+        </p>
+      </div>
+
+      <FilterBar />
+      <KpiCards />
+      <AnalyticsCharts />
     </div>
   );
 }

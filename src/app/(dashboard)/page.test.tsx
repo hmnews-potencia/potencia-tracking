@@ -2,18 +2,18 @@ import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import DashboardPage from './page';
 
-describe('DashboardPage (empty state)', () => {
-  it('should render empty state message', () => {
+describe('DashboardPage', () => {
+  it('should render dashboard heading', () => {
     render(<DashboardPage />);
 
-    expect(screen.getByText('Nenhum dado ainda')).toBeInTheDocument();
+    expect(screen.getByText('Dashboard')).toBeInTheDocument();
   });
 
-  it('should render instructions text', () => {
+  it('should render dashboard description', () => {
     render(<DashboardPage />);
 
     expect(
-      screen.getByText(/Crie links UTM e integre o script de tracking/),
+      screen.getByText(/Visao geral do tracking do projeto ativo/),
     ).toBeInTheDocument();
   });
 });
