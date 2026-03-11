@@ -1,29 +1,45 @@
+# Dependencies
+node_modules/
 
+# Next.js
+.next/
+out/
 
-# Environment & Secrets (AIOX)
+# Build
+dist/
+build/
+
+# Environment & Secrets
 .env
 .env.local
 .env.*.local
 *.key
 *.pem
 
-# Dependencies (AIOX)
-node_modules/
-node_modules
-
-# Build & Logs (AIOX)
-dist/
-build/
+# Logs
 *.log
 logs/
+npm-debug.log*
 
-# IDE & OS (AIOX)
+# IDE & OS
 .DS_Store
 Thumbs.db
 .idea/
 *.swp
+.vscode/
 
-# AIOX Local (AIOX)
+# AIOX Local
 .aiox-core/local/
+.aiox/
+.ai/
 .claude/settings.local.json
-.aiox/install-log.txt
+
+# Testing
+coverage/
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Misc
+nextjs-temp/
