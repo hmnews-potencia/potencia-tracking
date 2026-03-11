@@ -34,16 +34,31 @@ interface ProjectPage {
   url: string;
 }
 
+interface EditableLinkData {
+  id: string;
+  label: string;
+  base_url: string;
+  utm_source: string;
+  utm_medium: string;
+  utm_campaign: string;
+  utm_content: string | null;
+  utm_term: string | null;
+  page_id: string | null;
+  project_id: string;
+}
+
 interface CreateLinkDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onLinkCreated: () => void;
+  editLink?: EditableLinkData | null;
 }
 
 export function CreateLinkDialog({
   open,
   onOpenChange,
   onLinkCreated,
+  editLink,
 }: CreateLinkDialogProps) {
   const activeProjectId = useProjectStore((s) => s.activeProjectId);
 
@@ -61,8 +76,21 @@ export function CreateLinkDialog({
   const [utmTerm, setUtmTerm] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const isEditMode = !!editLink;
   const selectedPage = pages.find((p) => p.id === selectedPageId);
-  const baseUrl = selectedPage?.url || '';
+  const baseUrl = selectedPage?.url || (isEditMode ? editLink.base_url : '');
+
+  useEffect(() => {
+    if (open && editLink) {
+      setLabel(editLink.label);
+      setUtmSource(editLink.utm_source);
+      setUtmMedium(editLink.utm_medium);
+      setUtmCampaign(editLink.utm_campaign);
+      setUtmContent(editLink.utm_content || '');
+      setUtmTerm(editLink.utm_term || '');
+      if (editLink.page_id) setSelectedPageId(editLink.page_id);
+    }
+  }, [open, editLink]);
 
   const fetchPages = useCallback(async () => {
     try {
@@ -139,29 +167,44 @@ export function CreateLinkDialog({
 
     setLoading(true);
     try {
-      const res = await fetch('/api/links', {
-        method: 'POST',
+      const url = isEditMode ? `/api/links/${editLink.id}` : '/api/links';
+      const method = isEditMode ? 'PATCH' : 'POST';
+
+      const payload = isEditMode
+        ? {
+            label: label.trim(),
+            base_url: baseUrl,
+            utm_source: sanitizeUtmParam(utmSource),
+            utm_medium: utmMedium ? sanitizeUtmParam(utmMedium) : '',
+            utm_campaign: utmCampaign ? sanitizeUtmParam(utmCampaign) : '',
+            utm_content: utmContent ? sanitizeUtmParam(utmContent) : null,
+            utm_term: utmTerm ? sanitizeUtmParam(utmTerm) : null,
+          }
+        : {
+            project_id: activeProjectId,
+            page_id: selectedPageId || null,
+            label: label.trim(),
+            base_url: baseUrl,
+            utm_source: sanitizeUtmParam(utmSource),
+            utm_medium: utmMedium ? sanitizeUtmParam(utmMedium) : undefined,
+            utm_campaign: utmCampaign ? sanitizeUtmParam(utmCampaign) : undefined,
+            utm_content: utmContent ? sanitizeUtmParam(utmContent) : undefined,
+            utm_term: utmTerm ? sanitizeUtmParam(utmTerm) : undefined,
+          };
+
+      const res = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          project_id: activeProjectId,
-          page_id: selectedPageId || null,
-          label: label.trim(),
-          base_url: baseUrl,
-          utm_source: sanitizeUtmParam(utmSource),
-          utm_medium: utmMedium ? sanitizeUtmParam(utmMedium) : undefined,
-          utm_campaign: utmCampaign ? sanitizeUtmParam(utmCampaign) : undefined,
-          utm_content: utmContent ? sanitizeUtmParam(utmContent) : undefined,
-          utm_term: utmTerm ? sanitizeUtmParam(utmTerm) : undefined,
-        }),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
         const data = await res.json();
-        toast.error(data.error || 'Erro ao criar link');
+        toast.error(data.error || `Erro ao ${isEditMode ? 'atualizar' : 'criar'} link`);
         return;
       }
 
-      toast.success('Link criado com sucesso');
+      toast.success(isEditMode ? 'Link atualizado' : 'Link criado com sucesso');
       onLinkCreated();
       resetForm();
     } catch {
@@ -181,9 +224,11 @@ export function CreateLinkDialog({
     >
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Novo Link UTM</DialogTitle>
+          <DialogTitle>{isEditMode ? 'Editar Link UTM' : 'Novo Link UTM'}</DialogTitle>
           <DialogDescription>
-            Preencha os campos para gerar um link UTM padronizado.
+            {isEditMode
+              ? 'Atualize os campos do link UTM.'
+              : 'Preencha os campos para gerar um link UTM padronizado.'}
           </DialogDescription>
         </DialogHeader>
 
@@ -332,7 +377,9 @@ export function CreateLinkDialog({
 
           <DialogFooter>
             <Button type="submit" disabled={loading}>
-              {loading ? 'Criando...' : 'Criar Link'}
+              {loading
+                ? isEditMode ? 'Salvando...' : 'Criando...'
+                : isEditMode ? 'Salvar' : 'Criar Link'}
             </Button>
           </DialogFooter>
         </form>
