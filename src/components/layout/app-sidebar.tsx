@@ -19,7 +19,7 @@ export function AppSidebar() {
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="hidden w-56 shrink-0 border-r border-border bg-zinc-950 md:block">
+      <aside className="hidden w-56 shrink-0 border-r border-border bg-sidebar md:block">
         <nav className="flex flex-col gap-1 p-3">
           {navItems.map((item) => {
             const isActive = item.href === '/'
@@ -31,13 +31,13 @@ export function AppSidebar() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors',
+                  'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all',
                   isActive
-                    ? 'bg-zinc-800 text-foreground'
-                    : 'text-muted-foreground hover:bg-zinc-900 hover:text-foreground',
+                    ? 'bg-primary/15 text-primary'
+                    : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
                 )}
               >
-                <item.icon className="h-4 w-4" />
+                <item.icon className={cn('h-4 w-4', isActive && 'text-primary')} />
                 {item.label}
               </Link>
             );
@@ -46,7 +46,7 @@ export function AppSidebar() {
       </aside>
 
       {/* Mobile bottom nav */}
-      <nav className="fixed inset-x-0 bottom-0 z-50 flex border-t border-border bg-zinc-950 md:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-50 flex border-t border-border bg-card/95 backdrop-blur-sm md:hidden">
         {navItems.map((item) => {
           const isActive = item.href === '/'
             ? pathname === '/'

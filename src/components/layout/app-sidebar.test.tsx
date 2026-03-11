@@ -32,6 +32,6 @@ describe('AppSidebar', () => {
     // Desktop sidebar: find the first Dashboard link in the aside
     const aside = document.querySelector('aside');
     const dashboardLink = aside?.querySelector('a[href="/"]');
-    expect(dashboardLink?.className).toContain('bg-zinc-800');
+    expect(dashboardLink?.className).toContain('bg-primary/15');
   });
 });

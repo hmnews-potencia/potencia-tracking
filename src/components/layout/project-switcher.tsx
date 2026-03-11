@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { ChevronsUpDown, Plus } from 'lucide-react';
+import { ChevronsUpDown, Plus, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -31,26 +31,29 @@ export function ProjectSwitcher() {
   const activeProject = projects.find((p) => p.id === activeProjectId);
 
   useEffect(() => {
-    fetchProjects();
-  }, []);
+    let cancelled = false;
 
-  useEffect(() => {
-    if (!activeProjectId && projects.length > 0) {
-      setActiveProject(projects[0].id);
-    }
-  }, [projects, activeProjectId, setActiveProject]);
-
-  async function fetchProjects() {
-    try {
-      const res = await fetch('/api/projects');
-      if (res.ok) {
-        const data = await res.json();
-        setProjects(data);
+    async function load() {
+      try {
+        const res = await fetch('/api/projects');
+        if (res.ok && !cancelled) {
+          const data = await res.json();
+          setProjects(data);
+          // Auto-select first project if none active
+          if (!activeProjectId && data.length > 0) {
+            setActiveProject(data[0].id);
+          }
+        }
+      } catch {
+        // silently fail
+      } finally {
+        if (!cancelled) setLoading(false);
       }
-    } finally {
-      setLoading(false);
     }
-  }
+
+    load();
+    return () => { cancelled = true; };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleProjectCreated(project: Project) {
     setProjects((prev) => [project, ...prev]);
@@ -60,8 +63,8 @@ export function ProjectSwitcher() {
 
   if (loading) {
     return (
-      <Button variant="outline" size="sm" disabled className="w-40">
-        <span className="animate-pulse">Carregando...</span>
+      <Button variant="outline" size="sm" disabled className="w-44">
+        <span className="animate-pulse text-xs">Carregando...</span>
       </Button>
     );
   }
@@ -71,13 +74,13 @@ export function ProjectSwitcher() {
       <DropdownMenu>
         <DropdownMenuTrigger
           render={
-            <Button variant="outline" size="sm" className="w-40 justify-between" />
+            <Button variant="outline" size="sm" className="w-44 justify-between gap-1 border-border/60 bg-background/50 text-sm" />
           }
         >
-          <span className="truncate">
+          <span className="truncate text-xs">
             {activeProject?.name || 'Selecionar projeto'}
           </span>
-          <ChevronsUpDown className="ml-2 h-3 w-3 shrink-0 opacity-50" />
+          <ChevronsUpDown className="h-3 w-3 shrink-0 opacity-50" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" sideOffset={4}>
           <DropdownMenuLabel>Projetos</DropdownMenuLabel>
@@ -87,7 +90,10 @@ export function ProjectSwitcher() {
               key={project.id}
               onClick={() => setActiveProject(project.id)}
             >
-              <span className={activeProjectId === project.id ? 'font-medium' : ''}>
+              {activeProjectId === project.id && (
+                <Check className="h-3 w-3 text-primary" />
+              )}
+              <span className={activeProjectId === project.id ? 'font-medium text-primary' : ''}>
                 {project.name}
               </span>
             </DropdownMenuItem>

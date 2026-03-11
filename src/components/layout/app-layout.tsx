@@ -12,7 +12,7 @@ export function AppLayout({ email, children }: AppLayoutProps) {
       <AppHeader email={email} />
       <div className="flex flex-1">
         <AppSidebar />
-        <main className="flex-1 overflow-auto p-6 pb-20 md:pb-6">
+        <main className="flex-1 overflow-auto bg-background p-6 pb-20 md:pb-6">
           {children}
         </main>
       </div>

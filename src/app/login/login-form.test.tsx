@@ -48,8 +48,9 @@ describe('LoginForm', () => {
   it('should render "Potencia Tracking" heading', () => {
     render(<LoginForm />);
     expect(
-      screen.getByRole('heading', { name: 'Potencia Tracking' }),
+      screen.getByRole('heading', { name: /Potencia/i }),
     ).toBeInTheDocument();
+    expect(screen.getByText('Tracking')).toBeInTheDocument();
   });
 
   it('should render password visibility toggle', () => {
